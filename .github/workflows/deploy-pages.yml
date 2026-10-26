@@ -1,10 +1,10 @@
-name: Deploy frontend to GitHub Pages
+name: Publish Mini App to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - 'frontend/**'
+      - 'public-site/**'
   workflow_dispatch:
 
 permissions:
@@ -25,31 +25,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm install --no-audit --no-fund
-
-      - name: Build frontend for demo mode
-        working-directory: frontend
-        env:
-          VITE_DEMO_MODE: 'true'
-          VITE_APP_NAME: AI Trading Assistant
-        run: npm run build
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
+      - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: frontend/dist
-
-      - name: Deploy to GitHub Pages
+          path: public-site
+      - name: Publish site
         id: deployment
         uses: actions/deploy-pages@v4
