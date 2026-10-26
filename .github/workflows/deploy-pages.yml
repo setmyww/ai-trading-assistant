@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'project-source.zip'
+      - 'frontend/**'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
 
@@ -27,25 +27,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify source archive exists
-        run: test -f project-source.zip
-
-      - name: Extract project source
-        run: unzip -q project-source.zip -d source
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: source/ai-trading-assistant/frontend/package.json
+          cache-dependency-path: frontend/package.json
 
       - name: Install frontend dependencies
-        working-directory: source/ai-trading-assistant/frontend
+        working-directory: frontend
         run: npm install --no-audit --no-fund
 
-      - name: Build frontend
-        working-directory: source/ai-trading-assistant/frontend
+      - name: Build frontend for demo mode
+        working-directory: frontend
         env:
           VITE_DEMO_MODE: 'true'
           VITE_APP_NAME: AI Trading Assistant
@@ -57,7 +51,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: source/ai-trading-assistant/frontend/dist
+          path: frontend/dist
 
       - name: Deploy to GitHub Pages
         id: deployment
